@@ -115,11 +115,20 @@ int check(struct nfq_q_handle *qh, struct nfq_data *tb, u_int32_t id)
                                 if(!memcmp(host, host_name, strlen(host_name)))
                                 {
                                         printf("Found banned Host!\n");
-                                        return nfq_set_verdict(qh, id, NF_DROP, 0, NULL);
+                                        nfq_set_verdict(qh, id, NF_DROP, 0, NULL);
+					return 1;
                                 }
+				else
+					return 0;
                         }
+			else
+				return 0;
                 }
+		else
+			return 0;
         }
+	else
+		return 0;
 }
 	
 
@@ -128,8 +137,8 @@ static int cb(struct nfq_q_handle *qh, struct nfgenmsg *nfmsg,
 {
 	u_int32_t id = print_pkt(nfa);
 	printf("entering callback!!!\n");
-	check(qh, nfa, id);
-	return nfq_set_verdict(qh, id, NF_ACCEPT, 0, NULL);
+	if(!check(qh, nfa, id))
+		return nfq_set_verdict(qh, id, NF_ACCEPT, 0, NULL);
 }
 
 int main(int argc, char **argv)
