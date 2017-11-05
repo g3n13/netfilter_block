@@ -10,6 +10,7 @@
 #include <linux/types.h>
 #include <linux/netfilter.h>		/* for NF_ACCEPT */
 #include <errno.h>
+#include <string.h>
 
 #include <libnetfilter_queue/libnetfilter_queue.h>
 
@@ -112,7 +113,7 @@ int check(struct nfq_q_handle *qh, struct nfq_data *tb, u_int32_t id)
                         if(!memcmp(host_check, host_str, 6))
                         {
                                 unsigned char* host = (unsigned char*)(host_check+6);
-                                if(!memcmp(host, host_name, strlen(host_name)))
+                                if(strstr((const char*)host, host_name)!=NULL)
                                 {
                                         printf("Found banned Host!\n");
                                         nfq_set_verdict(qh, id, NF_DROP, 0, NULL);
